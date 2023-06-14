@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: who is prime minister of Tamilnadu",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: I'm sorry, but there is no Prime Minister of Tamilnadu. Tamilnadu is a state in India and has a Chief Minister. Currently, the Chief Minister of Tamilnadu is M.K. Stalin.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T23:13:55.170221"
+}

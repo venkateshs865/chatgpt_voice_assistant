@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: who is prime minister of Tamilnadu",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: Currently, there is no Prime Minister for Tamil Nadu as it is a state in India which has a Chief Minister instead. The Chief Minister of Tamil Nadu as of 2021 is M.K. Stalin.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T10:22:56.796233"
+}

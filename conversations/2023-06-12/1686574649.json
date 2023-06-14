@@ -1,0 +1,25 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: where is India is located",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: India is a country located in South Asia. It is bordered by Pakistan to the west, China and Nepal to the north, Bhutan to the northeast, and Bangladesh and Myanmar to the east. The Indian Ocean lies to the south of India.",
+        "audio_path": "C:\\gpt-voice-companion\\audio\\2023-06-12\\45e5f2136b.mp3"
+      }
+    },
+    {
+      "user": {
+        "message": "User: where is Tamil Nadu located where is Tamilnadu located",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: Tamil Nadu is a state located on the southeastern coast of India. It is bordered by the Bay of Bengal to the east, Andhra Pradesh to the north, Karnataka to the west, and Kerala to the south. The capital of Tamil Nadu is Chennai.",
+        "audio_path": "C:\\gpt-voice-companion\\audio\\2023-06-12\\e2a38a4713.mp3"
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T18:24:49.000282"
+}

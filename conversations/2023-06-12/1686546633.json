@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: who is Prime Minister of India who is the Prime Minister of India",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: As of November 2021, the Prime Minister of India is Narendra Modi.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T10:39:31.767829"
+}

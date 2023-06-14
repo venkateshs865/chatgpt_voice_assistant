@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: who is Prime Minister of America who is Prime Minister of America",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: I'm sorry, there is no Prime Minister in America. The President is the head of the United States government, and the current President is Joe Biden.",
+        "audio_path": "C:\\gpt-voice-companion\\audio\\2023-06-12\\6631e3b3a1.mp3"
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T10:42:07.733840"
+}

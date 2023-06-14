@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: what is data science",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: Data science is the field of study that involves scientific methods, processes, algorithms, and systems to extract knowledge and insights from structured and unstructured data. It combines various techniques and tools from statistics, mathematics, computer science, and domain expertise to analyze and interpret complex data sets. The goal of data science is to discover patterns, predict outcomes, and provide valuable insights that can help inform decision-making in various fields such as business, medicine, social sciences, and more.",
+        "audio_path": "C:\\gpt-voice-companion\\audio\\2023-06-12\\cac7399062.mp3"
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T00:09:09.558840"
+}

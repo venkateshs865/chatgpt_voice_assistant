@@ -1,0 +1,13 @@
+{
+    "voice_recognition": "True",
+    "gui": true,
+    "name": "OpenAI",
+    "context": "The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.",
+    "openai_model": "gpt-3.5-turbo",
+    "openai_temperature": 1.2,
+    "openai_max_reply_tokens": 200,
+    "openai_retry_attempts": 3,
+    "openai_api_key": "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",
+    "elevenlabs_api_key": "dc218c2a53a81a91284cda4a66a29318",
+    "voice_id": "EXAVITQu4vr4xnSDxMaL"
+}

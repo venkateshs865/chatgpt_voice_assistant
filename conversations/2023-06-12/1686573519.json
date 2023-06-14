@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: who invented mobile phone",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: The mobile phone was invented by Martin Cooper in 1973 while he was working at Motorola.",
+        "audio_path": "C:\\gpt-voice-companion\\audio\\2023-06-12\\8ffd635bfb.mp3"
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T18:08:00.256634"
+}

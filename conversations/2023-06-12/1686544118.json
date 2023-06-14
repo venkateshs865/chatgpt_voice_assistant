@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: what is data science",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: Data science is the field of using dataset analysis to extract insights and knowledge that can help inform decision-making and solve complex problems. It involves techniques such as machine learning, statistical analysis, and data visualization to process, analyze, and interpret large amounts of data. Data scientists can use these methods to identify trends, patterns, and correlations within a dataset and use this information to make predictions and recommendations. It is a rapidly growing field with a wide range of applications across industries.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T09:58:26.183834"
+}

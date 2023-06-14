@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: what is data science",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: Data science is the interdisciplinary field that uses scientific methods, processes, algorithms, and systems to extract knowledge and insights from data in various forms, both structured and unstructured. It involves data annotation, collection, curation, extraction, cleaning, integration, selection, transformation, visualization, and analysis using statistical methods, machine learning algorithms, artificial intelligence techniques, and other advanced computational tools and frameworks in order to help businesses and organizations make better informed decisions and solve complex problems.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T10:01:41.567482"
+}

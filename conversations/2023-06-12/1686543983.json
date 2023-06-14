@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: hello what is data science",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: Hi! Data Science is a field that involves using programming, statistics, and machine learning to extract insights and knowledge from large and complex data sets. The objective is to extract valuable and predictive information from data that is not directly visible to humans. The field has applications in a variety of fields including health care, finance, marketing, and many other areas.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T09:56:10.309972"
+}

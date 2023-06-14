@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: which year iPhone 8 was launched",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: The iPhone 8 was launched in September 2017.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T10:27:51.486501"
+}

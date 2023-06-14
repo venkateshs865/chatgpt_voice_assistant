@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: Prime Minister of Tamil Nadu who is prime minister of Tamilnadu who is CEO of Microsoft Office",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: I'm sorry, but your question doesn't seem to be complete. Would you please clarify it so that I can assist you better?",
+        "audio_path": "C:\\gpt-voice-companion\\audio\\2023-06-13\\844f27003e.mp3"
+      }
+    }
+  ],
+  "timestamp": "2023-06-13T09:13:30.532222"
+}

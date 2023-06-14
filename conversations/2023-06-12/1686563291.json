@@ -1,0 +1,25 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: where is headquarters of Microsoft office located",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: The Microsoft headquarters is located in Redmond, Washington, United States.",
+        "audio_path": "C:\\gpt-voice-companion\\audio\\2023-06-12\\79bc286716.mp3"
+      }
+    },
+    {
+      "user": {
+        "message": "User: Microsoft headquarters",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: is located at One Microsoft Way, Redmond, WA 98052, USA.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T11:42:36.119628"
+}

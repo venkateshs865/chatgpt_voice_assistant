@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: what is data science",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: Data science is a multidisciplinary field that involves using statistical and computational techniques to extract insights and knowledge from data. It combines skills from computer science, mathematics, and statistics to turn raw data into actionable insights that businesses and organizations can use to make more informed decisions. Some common applications of data science include predictive modeling, data visualization, machine learning, and natural language processing.",
+        "audio_path": null
+      }
+    }
+  ],
+  "timestamp": "2023-06-12T10:12:59.187377"
+}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GPT Voice Companion</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<style>
+    /* Import Font Awesome for the microphone symbol */
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+    body{
+        font-family: 'Poppins', sans-serif;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1440' height='560' preserveAspectRatio='none' viewBox='0 0 1440 560'%3e%3cg mask='url(%26quot%3b%23SvgjsMask2213%26quot%3b)' fill='none'%3e%3crect width='1440' height='560' x='0' y='0' fill='rgba(255%2c 255%2c 255%2c 1)'%3e%3c/rect%3e%3cg transform='translate(0%2c 0)' stroke-linecap='round' stroke='url(%26quot%3b%23SvgjsLinearGradient2214%26quot%3b)'%3e%3cpath d='M432.5 252.14 L432.5 307.86' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M457.5 228.26 L457.5 331.74' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M482.5 190.78 L482.5 369.22' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M507.5 189.07 L507.5 370.93' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M532.5 194.33 L532.5 365.67' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M557.5 220.47 L557.5 339.53' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M582.5 258.77 L582.5 301.23' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M607.5 212.79 L607.5 347.21' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M632.5 254.22 L632.5 305.79' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M657.5 217.47 L657.5 342.53' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M682.5 264.12 L682.5 295.88' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M707.5 242.87 L707.5 317.13' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M732.5 188.63 L732.5 371.38' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M757.5 177.27 L757.5 382.73' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M782.5 224.13 L782.5 335.87' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M807.5 225.47 L807.5 334.53' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M832.5 173.84 L832.5 386.15' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M857.5 251.19 L857.5 308.81' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M882.5 255.46 L882.5 304.54' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M907.5 186.5 L907.5 373.5' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M932.5 233.32 L932.5 326.68' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M957.5 243.61 L957.5 316.39' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M982.5 178 L982.5 382' stroke-width='18.75'%3e%3c/path%3e%3cpath d='M1007.5 239.35 L1007.5 320.65' stroke-width='18.75'%3e%3c/path%3e%3c/g%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask2213'%3e%3crect width='1440' height='560' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='410.4' y1='280' x2='1029.6' y2='280' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient2214'%3e%3cstop stop-color='rgba(58%2c 124%2c 195%2c 0.4)' offset='0'%3e%3c/stop%3e%3cstop stop-color='rgba(194%2c 254%2c 255%2c 1)' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
+    }
+
+    h1{
+        align-items: center;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Style the button */
+    #voiceButton {
+    background-color: #007bff;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    align-items: center;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Style the microphone symbol */
+    #voiceButton i {
+    margin-right: 8px;
+    }
+
+    /* On hover effect */
+    #voiceButton:hover {
+    background-color: #0056b3;
+    }
+
+</style>
+<body>
+    <div class = "container" style = "margin-left:10%; margin-right: 10%;">
+        <h1>ChatGPT Voice Assistant</h1>
+
+        <center>
+            <button id="voiceButton" onclick="startListening()"><i class="fas fa-microphone"></i> Tap to Talk</button>
+        </center>
+        <!-- <button onclick="stopListening()">Stop Listening</button> -->
+
+        <div id="conversation"></div>
+    </div>
+    <script>
+        let recognition;
+        let isListening = false;
+
+        function startListening() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Speech recognition is not supported in this browser. Please try using a different browser.");
+                return;
+            }
+
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = function() {
+                isListening = true;
+                console.log('Listening started...');
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+            };
+
+            recognition.onend = function() {
+                if (isListening) {
+                    console.log('Listening stopped...');
+                    startListening();
+                }
+            };
+
+            recognition.onresult = function(event) {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                }
+
+                if (transcript.trim() !== '') {
+                    console.log('User input:', transcript);
+                    processInput(transcript);
+                }
+            };
+
+            recognition.start();
+        }
+
+        function stopListening() {
+            if (recognition && isListening) {
+                recognition.stop();
+                isListening = false;
+                console.log('Listening stopped...');
+            }
+        }
+
+        function processInput(userInput) {
+            $.ajax({
+                url: '/process_input',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 'user_input': userInput }),
+                success: function(response) {
+                    console.log('Bot response:', response.response);
+                    showResponse(response.response);
+                    playResponse(response.response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+        function showResponse(response) {
+            let conversationDiv = document.getElementById('conversation');
+            let responseDiv = document.createElement('div');
+            responseDiv.innerHTML = '<strong>Bot:</strong> ' + response;
+            conversationDiv.appendChild(responseDiv);
+        }
+
+        function playResponse(response) {
+            let utterance = new SpeechSynthesisUtterance(response);
+            speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>

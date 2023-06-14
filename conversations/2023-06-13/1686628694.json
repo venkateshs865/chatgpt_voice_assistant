@@ -1,0 +1,15 @@
+{
+  "history": [
+    {
+      "user": {
+        "message": "User: who is CEO of Apple",
+        "audio_path": null
+      },
+      "ai": {
+        "message": "OpenAI: The current CEO of Apple is Tim Cook.",
+        "audio_path": "C:\\gpt-voice-companion\\audio\\2023-06-13\\23f7c019f7.mp3"
+      }
+    }
+  ],
+  "timestamp": "2023-06-13T09:27:35.051109"
+}
