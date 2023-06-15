@@ -1,17 +1,14 @@
-import argparse
-import os
-import speech_recognition as sr
-from enum import Enum
-from dotenv import load_dotenv
 import json
-import subprocess
-import shlex
 import logging
 import os
 import time
 from enum import Enum
-
+import sounddevice as sd
+import soundfile as sf
+import tempfile
+import speech_recognition as sr
 import gradio as gr
+
 import speech_recognition as sr
 from colorama import Fore, Style, init
 from playaudio import playaudio
@@ -26,10 +23,6 @@ init(autoreset=True)  # Initialize colorama
 
 
 class Companion:
-    class ProcessInputStatus(Enum):
-        SAY = 0
-        LOG = 1
-        EXIT = 2
 
     AUDIO_PATH = "audio/"
     CONVERSATION_PATH = "conversations/"
@@ -69,7 +62,6 @@ class Companion:
         return response
 
     def say(self, text: str):
-        print("hello, Hi Its me venkatesh.....................")
         success, audio_path = self.elevenlabs.write_audio(text, self.AUDIO_PATH)
         self.history_manager.add_audio_path_to_last_entry(audio_path, False)
         logging.debug(f"Audio path: {audio_path}")
@@ -144,33 +136,56 @@ class Companion:
                 print(status.response)
             elif status.status == ProcessInputStatus.SAY:
                 self.say(status.response)
-
-    def chatbot_tab(self):
+    
+    def chatbot_tab(self):     
         with gr.Tab("Chatbot"):
             gr.Markdown(f"""## You are talking to a chatbot named {self.openai.name}, prompted with:
             \"{self.openai.context}\"""")
             chatbot = gr.Chatbot(label=self.openai.name)
-            text_input = gr.Textbox(show_label=False)
+            record_btn = gr.Button("Record Voice")
             with gr.Row():
                 submit_btn = gr.Button("Submit")
                 clear_btn = gr.Button("Clear")
                 exit_btn = gr.Button("Exit")
 
-            def user(user_message, chatbot_dialogue):
-                return "", chatbot_dialogue + [[user_message, None]]
+            def record_voice_and_convert():
+                duration = 5  # Duration of the recording in seconds
+                sample_rate = 44100  # Sample rate of the audio
+
+                recording = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1)
+                sd.wait()  # Wait until the recording is complete
+
+                file_path = "recorded_voice.wav"  # Path to save the recorded voice
+                sf.write(file_path, recording, sample_rate)  # Save the recording to a WAV file
+
+                # Convert the recorded voice to text
+                r = sr.Recognizer()
+                with sr.AudioFile(file_path) as source:
+                    audio_data = r.record(source)
+                    text = r.recognize_google(audio_data)
+
+                print("Recording saved as recorded_voice.wav")
+                print("Converted text:", text)
+                return [(text, None)]  # Return converted text as a list of tuples
+
+
+            def user(chatbot_dialogue):
+                text = record_voice_and_convert()
+                return [chatbot_dialogue[0] + [[text, None]]]  # Return chatbot dialogue as a list of lists
 
             def bot(chatbot_dialogue):
                 status = self.process_input(chatbot_dialogue[-1][0])
                 if status.status == ProcessInputStatus.SAY:
                     self.say(status.response)
                 chatbot_dialogue[-1][1] = status.response
-                return chatbot_dialogue
-            
+                return [chatbot_dialogue]  # Wrap the dialogue in a list
+
             def clear_func():
                 self.history_manager.clear()
                 return None
-
+            
             global exit_check
+            
             exit_check = False
 
             def exit_func():
@@ -179,14 +194,11 @@ class Companion:
                 print(Fore.RED + "Exiting..." + Style.RESET_ALL)
                 return None
 
-            text_input.submit(user, [text_input, chatbot], [text_input, chatbot], queue=False).then(
-                bot, chatbot, chatbot
-            )
-            submit_btn.click(user, [text_input, chatbot], [text_input, chatbot], queue=False).then(
-                bot, chatbot, chatbot
-            )
-            clear_btn.click(fn=clear_func, inputs=None, outputs=chatbot, queue=False)
-            exit_btn.click(fn=exit_func, inputs=None, outputs=None, queue=False)
+            submit_btn.click(user, [chatbot], queue=False).then(bot, [chatbot], queue=False)
+            record_btn.click(fn=record_voice_and_convert, outputs=[chatbot], queue=False)
+            clear_btn.click(fn=clear_func, outputs=chatbot, queue=False)
+            exit_btn.click(fn=exit_func, outputs=None, queue=False)
+
 
     def conversation_explorer_tab(self):
         with gr.Tab("Conversation Explorer"):
@@ -196,6 +208,7 @@ class Companion:
         global exit_check
 
         with gr.Blocks(title="Voice Assistant") as demo:
+            # record_voice()
             self.chatbot_tab()
             self.conversation_explorer_tab()
 
