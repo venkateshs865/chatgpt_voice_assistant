@@ -1,261 +1,43 @@
-import json
-import logging
+import argparse
 import os
-import time
-from enum import Enum
-import sounddevice as sd
-import soundfile as sf
-import tempfile
-import speech_recognition as sr
-import gradio as gr
 
-import speech_recognition as sr
-from colorama import Fore, Style, init
-from playaudio import playaudio
+from dotenv import load_dotenv
 
-from modules.config_manager import ConfigManager
-from modules.elevenlabs import ElevenLabsTTS
-from modules.history_manager import HistoryEntry, HistoryManager
-from modules.openai_wrapper import OpenAI
-from modules.utils import ensure_dir_exists
-
-init(autoreset=True)  # Initialize colorama
+from modules.companion import Companion
 
 
-class Companion:
+def load_keys_from_env():
+    load_dotenv()
+    return os.environ.get('OPENAI_API_KEY'), os.environ.get('ELEVENLABS_API_KEY')
 
-    AUDIO_PATH = "audio/"
-    CONVERSATION_PATH = "conversations/"
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Have GPT talk to you')
+    parser.add_argument('--openai_api_key', help='Your OpenAI API key.')
+    parser.add_argument('--elevenlabs_api_key', help='Your elevenlabs.io API key.')
+    parser.add_argument('--debug', action='store_true', help='enable logging', default=False)
+    parser.add_argument('--name', help='Name of the chatbot (default is OpenAI)')
+    parser.add_argument('--context', help='Context to start the conversation with (default is "The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.")')
+    parser.add_argument('--openai_model', help='OpenAI model to use (default is gpt-3.5-turbo)')
+    parser.add_argument('--openai_temperature', help='OpenAI temperature to use (default is 1.2)')
+    parser.add_argument('--openai_max_reply_tokens', help='OpenAI max tokens to reply with (default is 200)', type=int)
+    parser.add_argument('--voice_id', help='Voice ID for custom ElevenLabs model (default is c, Bella Premade Voice)')
+    parser.add_argument('--voice_recognition', help='Enable voice input')
+    parser.add_argument('--openai_retry_attempts', help='Number of times to retry OpenAI API calls (default is 3)')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--gui', action='store_true', help='Enable the GUI', default=True)
+    group.add_argument('--no-gui', dest='gui', action='store_false', help='Disable the GUI')
+    args = parser.parse_args()
 
-    DEFAULTS = {
-        'voice_recognition': True,
-        'gui': False
-    }
+    openai_api_key, elevenlabs_api_key = args.openai_api_key, args.elevenlabs_api_key
+    env_dict = vars(args)
 
-    def __init__(self, args_dict: dict, debug: bool = True):
-        self.config_manager = ConfigManager(args_dict, self.DEFAULTS)
-        self.load_config()
-        self.openai = OpenAI(args_dict)
-        self.elevenlabs = ElevenLabsTTS(args_dict)
-        self.history_manager = HistoryManager()
+    if not openai_api_key or not elevenlabs_api_key:
+        openai_api_key, elevenlabs_api_key = load_keys_from_env()
+        if not openai_api_key or not elevenlabs_api_key:
+            parser.print_help()
+            exit(1)
+        env_dict['openai_api_key'] = openai_api_key
+        env_dict['elevenlabs_api_key'] = elevenlabs_api_key
 
-        ensure_dir_exists(self.AUDIO_PATH)
-        ensure_dir_exists(self.CONVERSATION_PATH)
-    
-        if debug:
-            logging.basicConfig(level=logging.DEBUG)
-        else:
-            logging.basicConfig(level=logging.CRITICAL)
-
-    def load_config(self):
-        self.voice_recognition = self.config_manager['voice_recognition']
-        self.gui = self.config_manager['gui']
-        self.save_config()
-
-    def save_config(self):
-        self.config_manager['voice_recognition'] = self.voice_recognition
-        self.config_manager['gui'] = self.gui
-
-    def get_response(self, prompt: str) -> str:
-        response = self.openai.query_gpt(prompt)
-        logging.debug(f"Response: {response}")
-        return response
-
-    def say(self, text: str):
-        success, audio_path = self.elevenlabs.write_audio(text, self.AUDIO_PATH)
-        self.history_manager.add_audio_path_to_last_entry(audio_path, False)
-        logging.debug(f"Audio path: {audio_path}")
-        if success:
-            print(Fore.BLUE + f"{self.openai.name}: " + Style.RESET_ALL + text)
-            playaudio(audio_path)
-        else:
-            print(Fore.RED + "Error: " + Style.RESET_ALL + "Could not access ElevenLabs API.")
-
-    def process_input(self, text: str, is_voice: bool = False, retry_attempts: int = 3):
-        if is_voice:
-            if text.lower() == "exit":
-                return ProcessStatus(ProcessInputStatus.EXIT, None)
-            elif text.lower() == "help":
-                return ProcessStatus(ProcessInputStatus.LOG, "Commands for voice input:\nexit - quit\nhelp - help")
-        else:
-            if text.startswith("!"):
-                if text[1].lower() == "q":
-                    return ProcessStatus(ProcessInputStatus.EXIT, None)
-                elif text[1].lower() == "h":
-                    return ProcessStatus(ProcessInputStatus.LOG, "Commands for text input:\n!q - quit\n!h - help")
-
-        for attempt in range(retry_attempts + 1):
-            response = self.get_response(self.history_manager.to_str() + text)
-            if len(response.strip()) > 0:
-                break
-            if attempt == retry_attempts:
-                return ProcessStatus(ProcessInputStatus.LOG, (Fore.RED + "Error: " + Style.RESET_ALL + "No response from chatbot."))
-            logging.debug(f"Retry attempt {attempt + 1}")
-
-        user_entry = HistoryEntry(f"User: {text}", None)
-        ai_entry = HistoryEntry(f"{self.openai.name}: {response}", None)
-        self.history_manager.add_entry(user_entry, ai_entry)
-        logging.debug(f"History: {self.history_manager.to_str()}")
-
-        return ProcessStatus(ProcessInputStatus.SAY, response)
-
-    def loop_text_input(self):
-        while True:
-            user_input = input(Fore.GREEN + "You: " + Style.RESET_ALL)
-            logging.debug(f"User input: {user_input}")
-
-            status = self.process_input(user_input)
-            if status.status == ProcessInputStatus.EXIT:
-                break
-            elif status.status == ProcessInputStatus.LOG:
-                print(status.response)
-            elif status.status == ProcessInputStatus.SAY:
-                self.say(status.response)
-
-    def loop_voice_input(self):
-        recognizer = sr.Recognizer()
-        while True:
-            with sr.Microphone() as source:
-                print("Listening...")
-                audio = recognizer.listen(source)
-                try:
-                    user_input = recognizer.recognize_google(audio)
-                    logging.debug(f"Audio user input: {user_input}")
-                    print(Fore.GREEN + "You: " + Style.RESET_ALL + user_input)
-                except sr.UnknownValueError:
-                    print(Fore.RED + "Error: " + Style.RESET_ALL + "Could not understand the audio.")
-                    continue
-                except sr.RequestError:
-                    print(Fore.RED + "Error: " + Style.RESET_ALL + "Could not request results from Google Speech Recognition service.")
-                    continue
-
-            status = self.process_input(user_input, is_voice=True)
-            if status.status == ProcessInputStatus.EXIT:
-                break
-            elif status.status == ProcessInputStatus.LOG:
-                print(status.response)
-            elif status.status == ProcessInputStatus.SAY:
-                self.say(status.response)
-    
-    def chatbot_tab(self):     
-        with gr.Tab("Chatbot"):
-            gr.Markdown(f"""## You are talking to a chatbot named {self.openai.name}, prompted with:
-            \"{self.openai.context}\"""")
-            chatbot = gr.Chatbot(label=self.openai.name)
-            record_btn = gr.Button("Record Voice")
-            with gr.Row():
-                submit_btn = gr.Button("Submit")
-                clear_btn = gr.Button("Clear")
-                exit_btn = gr.Button("Exit")
-
-            def record_voice_and_convert():
-                duration = 5  # Duration of the recording in seconds
-                sample_rate = 44100  # Sample rate of the audio
-
-                recording = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1)
-                sd.wait()  # Wait until the recording is complete
-
-                file_path = "recorded_voice.wav"  # Path to save the recorded voice
-                sf.write(file_path, recording, sample_rate)  # Save the recording to a WAV file
-
-                # Convert the recorded voice to text
-                r = sr.Recognizer()
-                with sr.AudioFile(file_path) as source:
-                    audio_data = r.record(source)
-                    text = r.recognize_google(audio_data)
-
-                print("Recording saved as recorded_voice.wav")
-                print("Converted text:", text)
-                return [(text, None)]  # Return converted text as a list of tuples
-
-
-            def user(chatbot_dialogue):
-                text = record_voice_and_convert()
-                return [chatbot_dialogue[0] + [[text, None]]]  # Return chatbot dialogue as a list of lists
-
-            def bot(chatbot_dialogue):
-                status = self.process_input(chatbot_dialogue[-1][0])
-                if status.status == ProcessInputStatus.SAY:
-                    self.say(status.response)
-                chatbot_dialogue[-1][1] = status.response
-                return [chatbot_dialogue]  # Wrap the dialogue in a list
-
-            def clear_func():
-                self.history_manager.clear()
-                return None
-            
-            global exit_check
-            
-            exit_check = False
-
-            def exit_func():
-                global exit_check
-                exit_check = True
-                print(Fore.RED + "Exiting..." + Style.RESET_ALL)
-                return None
-
-            submit_btn.click(user, [chatbot], queue=False).then(bot, [chatbot], queue=False)
-            record_btn.click(fn=record_voice_and_convert, outputs=[chatbot], queue=False)
-            clear_btn.click(fn=clear_func, outputs=chatbot, queue=False)
-            exit_btn.click(fn=exit_func, outputs=None, queue=False)
-
-
-    def conversation_explorer_tab(self):
-        with gr.Tab("Conversation Explorer"):
-            pass
-
-    def launch_demo(self):
-        global exit_check
-
-        with gr.Blocks(title="Voice Assistant") as demo:
-            # record_voice()
-            self.chatbot_tab()
-            self.conversation_explorer_tab()
-
-        demo.launch(prevent_thread_lock=True)
-
-        while not exit_check:
-            time.sleep(0.5)
-
-        demo.close()
-
-    def loop(self):
-        if self.gui:
-            self.launch_demo()
-        else:
-            print("Type !h for help")
-            print(Fore.YELLOW + f"Context: " + Style.RESET_ALL + "You are talking to a chatbot named " + Fore.BLUE + self.openai.name + Style.RESET_ALL + f", prompted with \"{self.openai.context}\".")
-
-            if self.voice_recognition:
-                self.loop_voice_input()
-            else:
-                self.loop_text_input()
-
-    def get_voices(self):
-        return self.elevenlabs.get_voices()
-
-    def __enter__(self):
-        return self
-    
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.save_conversation()
-
-    def save_conversation(self):
-        date = time.strftime("%Y-%m-%d", time.localtime())
-        folder_path = os.path.join(self.CONVERSATION_PATH, date)
-        ensure_dir_exists(folder_path)
-        path = os.path.join(folder_path, f"{str(int(time.time()))}.json")
- 
-        with open(path, "w", encoding="utf8") as f:
-            f.write(self.history_manager.to_json())
-
-class ProcessInputStatus(Enum):
-    SAY = 0
-    LOG = 1
-    EXIT = 2
-
-class ProcessStatus:
-
-    def __init__(self, status: ProcessInputStatus, data: str = None):
-        self.status = status
-        self.response = data
+    with Companion(env_dict, debug=args.debug) as companion:
+        companion.loop()
